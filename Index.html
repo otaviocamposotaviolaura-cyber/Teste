@@ -1,0 +1,69 @@
+// Comando /aventura — Ilha do Destino 😈
+
+const aventuraJogos = {}
+
+async function aventura(sock, msg, from, body) {
+    const etapa = aventuraJogos[from]?.etapa || 0
+
+    if (body === "/aventura") {
+        aventuraJogos[from] = { etapa: 1 }
+        return sock.sendMessage(from, {
+            text: `💥 ILHA DO DESTINO 💥
+Você acordou jogado na areia, todo cagado, sem memória.
+Decide aí antes que eu durma:
+
+1️⃣ — Explorar a praia fedida 🏖️  
+2️⃣ — Entrar na floresta onde tudo quer te matar 🌳  
+3️⃣ — Gritar igual doido 📣`
+        })
+    }
+
+    // ETAPA 1
+    if (etapa === 1) {
+        if (body === "1") {
+            aventuraJogos[from].etapa = 2
+            return sock.sendMessage(from, { text: `Achou um mapa! Parabéns, Dora Aventureira 🙄
+Mas uma onda vem te engolir:
+
+1️⃣ — Correr pras pedras  
+2️⃣ — Virar sereia e nadar` })
+        }
+        if (body === "2") {
+            aventuraJogos[from].etapa = 3
+            return sock.sendMessage(from, { text: `A floresta vai te matar, olha o lobo aí 🐺🤡
+
+1️⃣ — Subir na árvore  
+2️⃣ — Lutar com um galho kkkkk` })
+        }
+        if (body === "3") {
+            aventuraJogos[from].etapa = 4
+            return sock.sendMessage(from, { text: `Você gritou e um barco amaldiçoado apareceu 🚤👻
+
+1️⃣ — Subir no barco  
+2️⃣ — Sair correndo como um pato` })
+        }
+    }
+
+    // ETAPA 2 – PRAIA
+    if (etapa === 2) {
+        delete aventuraJogos[from]
+        if (body === "1") return sock.sendMessage(from, { text: "Você tropeçou, caiu e o mar te engoliu 💀 Parabéns campeão 🤡" })
+        if (body === "2") return sock.sendMessage(from, { text: "Você não é sereia. Afogou. F 🙄💀" })
+    }
+
+    // ETAPA 3 – LOBO
+    if (etapa === 3) {
+        delete aventuraJogos[from]
+        if (body === "1") return sock.sendMessage(from, { text: "Subiu na árvore e o galho quebrou. O lobo agradece a janta 🐺💀" })
+        if (body === "2") return sock.sendMessage(from, { text: "Bateu no lobo com um galho 🤣 resultado: você virou petisco 💀" })
+    }
+
+    // ETAPA 4 – BARCO
+    if (etapa === 4) {
+        delete aventuraJogos[from]
+        if (body === "1") return sock.sendMessage(from, { text: "Barco era do capeta 😈 você sumiu do mapa 💀" })
+        if (body === "2") return sock.sendMessage(from, { text: "Tropeçou, bateu a cara e morreu de vergonha 💀" })
+    }
+}
+
+export default aventura;
