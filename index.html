@@ -1,69 +1,116 @@
-// Comando /aventura — Ilha do Destino 😈
-
-const aventuraJogos = {}
-
-async function aventura(sock, msg, from, body) {
-    const etapa = aventuraJogos[from]?.etapa || 0
-
-    if (body === "/aventura") {
-        aventuraJogos[from] = { etapa: 1 }
-        return sock.sendMessage(from, {
-            text: `💥 ILHA DO DESTINO 💥
-Você acordou jogado na areia, todo cagado, sem memória.
-Decide aí antes que eu durma:
-
-1️⃣ — Explorar a praia fedida 🏖️  
-2️⃣ — Entrar na floresta onde tudo quer te matar 🌳  
-3️⃣ — Gritar igual doido 📣`
-        })
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Ilha do Destino - Modo Sincerão😈</title>
+<style>
+    body {
+        background: #111;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+        padding: 40px;
     }
-
-    // ETAPA 1
-    if (etapa === 1) {
-        if (body === "1") {
-            aventuraJogos[from].etapa = 2
-            return sock.sendMessage(from, { text: `Achou um mapa! Parabéns, Dora Aventureira 🙄
-Mas uma onda vem te engolir:
-
-1️⃣ — Correr pras pedras  
-2️⃣ — Virar sereia e nadar` })
-        }
-        if (body === "2") {
-            aventuraJogos[from].etapa = 3
-            return sock.sendMessage(from, { text: `A floresta vai te matar, olha o lobo aí 🐺🤡
-
-1️⃣ — Subir na árvore  
-2️⃣ — Lutar com um galho kkkkk` })
-        }
-        if (body === "3") {
-            aventuraJogos[from].etapa = 4
-            return sock.sendMessage(from, { text: `Você gritou e um barco amaldiçoado apareceu 🚤👻
-
-1️⃣ — Subir no barco  
-2️⃣ — Sair correndo como um pato` })
-        }
+    #game {
+        max-width: 420px;
+        margin: auto;
+        border: 2px solid #fff;
+        border-radius: 10px;
+        padding: 20px;
+        background: #222;
     }
-
-    // ETAPA 2 – PRAIA
-    if (etapa === 2) {
-        delete aventuraJogos[from]
-        if (body === "1") return sock.sendMessage(from, { text: "Você tropeçou, caiu e o mar te engoliu 💀 Parabéns campeão 🤡" })
-        if (body === "2") return sock.sendMessage(from, { text: "Você não é sereia. Afogou. F 🙄💀" })
+    button {
+        width: 100%;
+        padding: 12px;
+        margin: 6px 0;
+        background: #ff4545;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
     }
-
-    // ETAPA 3 – LOBO
-    if (etapa === 3) {
-        delete aventuraJogos[from]
-        if (body === "1") return sock.sendMessage(from, { text: "Subiu na árvore e o galho quebrou. O lobo agradece a janta 🐺💀" })
-        if (body === "2") return sock.sendMessage(from, { text: "Bateu no lobo com um galho 🤣 resultado: você virou petisco 💀" })
+    button:hover {
+        background: #ff2020;
     }
+    h1 {
+        font-size: 24px;
+        color: #ff5555;
+        text-shadow: 0 0 10px red;
+    }
+</style>
+</head>
+<body>
 
-    // ETAPA 4 – BARCO
-    if (etapa === 4) {
-        delete aventuraJogos[from]
-        if (body === "1") return sock.sendMessage(from, { text: "Barco era do capeta 😈 você sumiu do mapa 💀" })
-        if (body === "2") return sock.sendMessage(from, { text: "Tropeçou, bateu a cara e morreu de vergonha 💀" })
+<div id="game">
+    <h1>ILHA DO DESTINO 😈</h1>
+    <p id="texto">Você acordou jogado na areia, todo cagado, sem memória. Decide aí antes que eu durma:</p>
+    <div id="opcoes"></div>
+</div>
+
+<script>
+let etapa = 1;
+
+function mostrarOpcoes(op1, op2) {
+    document.getElementById("opcoes").innerHTML = `
+        <button onclick="escolher(1)">${op1}</button>
+        <button onclick="escolher(2)">${op2}</button>
+    `;
+}
+
+function escolher(opcao) {
+    switch(etapa) {
+        case 1:
+            if (opcao == 1) {
+                etapa = 2;
+                document.getElementById("texto").innerText =
+                    "Achou um mapa! Parabéns, Dora Aventureira 🙄 Mas uma onda vem te engolir:";
+                mostrarOpcoes("Correr pras pedras", "Virar sereia e nadar");
+            } else if (opcao == 2) {
+                etapa = 3;
+                document.getElementById("texto").innerText =
+                    "A floresta vai te matar, olha o lobo aí 🐺🤡";
+                mostrarOpcoes("Subir na árvore", "Lutar com um galho kkkkk");
+            } else {
+                etapa = 4;
+                document.getElementById("texto").innerText =
+                    "Você gritou e um barco amaldiçoado apareceu 🚤👻";
+                mostrarOpcoes("Subir no barco", "Fugir correndo");
+            }
+            break;
+
+        case 2:
+            finalizar("Você se afogou, sereião 💀");
+            break;
+
+        case 3:
+            finalizar("O lobo te mordeu e te usou de travesseiro 🐺💀");
+            break;
+
+        case 4:
+            finalizar("Barco do capeta 😈 Você sumiu do mapa 💀");
+            break;
     }
 }
 
-export default aventura;
+function finalizar(msg) {
+    document.getElementById("texto").innerText = msg;
+    document.getElementById("opcoes").innerHTML = `
+        <button onclick="reset()">Jogar de novo?</button>
+    `;
+}
+
+function reset() {
+    etapa = 1;
+    document.getElementById("texto").innerText =
+        "Você acordou jogado na areia, todo cagado, sem memória. Decide aí antes que eu durma:";
+    mostrarOpcoes("Explorar a praia", "Entrar na floresta");
+}
+
+// Primeiro menu
+mostrarOpcoes("Explorar a praia", "Entrar na floresta");
+</script>
+
+</body>
+    </html>
